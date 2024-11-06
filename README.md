@@ -1,1 +1,86 @@
 # Social_Media_App
+FILES THAT WE ARE USED IN THE PROJECT
+->AuthController
+->User
+->UserRepository
+->JwtRequestFilter
+->JwtUtil
+->SecurityConfig
+->AuthService
+->SessionManager
+
+
+1. Register Endpoint (/register)
+Flow:
+1.Client Request:
+Client sends a POST request to /register with user details (username, password, role).
+2.Controller (AuthController):
+register() method is called.
+Passes user details to AuthService.registerUser().
+3.Service (AuthService):
+Check Username: UserRepository.existsByUsername(username) verifies if the username already exists.
+Encrypt Password: If available, password is encrypted using a password encoder (e.g., BCryptPasswordEncoder).
+Save User: Creates a new User object, and saves it using UserRepository.save(user).
+4.Response:
+If successful, AuthController sends a success response back to the client.
+Components Involved:
+Controller: AuthController
+Service: AuthService
+Repository: UserRepository
+Model: User
+
+2. Login Endpoint (/authenticate)
+Flow:
+1.Client Request:
+Client sends a POST request to /authenticate with username and password.
+2.Controller (AuthController):
+login() method is triggered.
+Forwards credentials to AuthService.authenticateUser().
+3.Service (AuthService):
+Load User: Retrieves user data via UserRepository.findByUsername(username).
+Validate Password: Compares input password with stored password using BCryptPasswordEncoder.matches().
+Generate JWT: If valid, generates a JWT using JwtUtil.generateToken(userDetails).
+4.Response:
+AuthController sends the JWT token in the response, allowing the client to use it for future authentication.
+
+Components Involved:
+Controller: AuthController
+Service: AuthService
+Repository: UserRepository
+Model: User
+Security: JwtUtil
+
+
+3. Logout Endpoint (/logout) (Optional Implementation)
+Flow:
+1.Client Request:
+Client sends a POST request to /logout, typically with the JWT (or the client can manage logout by clearing the token locally).
+2.Controller (AuthController):
+logout() method is called.
+Calls SessionManager.invalidateToken(token).
+3.Session Management (SessionManager):
+Invalidate Token: Adds token to a blacklist or removes it from an in-memory store.
+Optional logic may be added to mark the session as inactive.
+4.Response:
+AuthController returns a success response, indicating logout success.
+
+Components Involved:
+Controller: AuthController
+Service: SessionManager (optional, if token management is implemented)
+
+
+4. JWT Token Validation (for Secured Endpoints)
+Flow:
+1.Client Request:
+Client sends a request to a secured endpoint (e.g., /user, /availability), with the JWT in the Authorization header.
+2.Filter (JwtRequestFilter):
+Intercepts the request before it reaches any controller.
+Extract JWT: Reads JWT from the Authorization header.
+Validate Token: Calls JwtUtil.validateToken(token, userDetails) to verify the JWT’s validity.
+Set Authentication: If valid, retrieves user details and sets authentication context for the request.
+3.Controller Access:
+If validation succeeds, the request proceeds to the appropriate controller with the authenticated user details.
+
+Components Involved:
+Security: JwtRequestFilter, JwtUtil
+Config: SecurityConfig (to configure filter chain and session management)
