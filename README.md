@@ -129,6 +129,3 @@
 - **Authentication**:
     - Require JWT-based authentication for all other endpoints.
 
-- **Session Management**:
-    - Set session management to stateless for JWT handling.
-    
