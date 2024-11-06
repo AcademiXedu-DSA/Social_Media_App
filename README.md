@@ -5,7 +5,7 @@
 2.The User table will store information about each user in User.java.
 3.Table contains -->username which should be unique 
 4.password (String): Stores the hashed password (using Bcrypt for security).
-5.role (String): Stores the role of the user, such as "USER", "ADMIN", etc.
+5.role (String): Stores the role of the user, such as "USER", "ADMIN".
 
 **USER REGISTRATION**
 1.Create a /register endpoint in AuthController to handle user registration requests.
