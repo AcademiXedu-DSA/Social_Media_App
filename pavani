@@ -1,0 +1,47 @@
+structure:
+AuthController.java: Defines REST API endpoints for user registration, login, and logout.
+AuthService.java: Contains business logic for user registration, login, and logout, interacting with UserRepository, SessionManager, and JwtUtil.
+SessionManager.java: Manages active JWT tokens, ensuring each user has only one active session.
+User.java: Entity representing a user with fields for id, username, and password, mapping to the database.
+UserRepository.java: Repository interface to access and manage User data.
+JwtRequestFilter.java: Filters incoming requests, checking for a valid JWT and setting authentication if valid.
+JwtUtil.java: Utility class for creating, parsing, and validating JWT tokens.
+SecurityConfig.java: Configures Spring Security, allowing access rules and JWT-based authentication.
+
+USER REGISTRATION:
+User hits /auth/register with username and password.
+Checks if the user already exists; if not, proceeds with registration.
+Password is hashed using BCrypt and saved.
+Saves user details in the database and returns "User registered successfully."
+
+USER LOGIN:
+User logs in via /auth/login with username and password.
+Compares the password with the stored hash.
+Generates a JWT token if valid and stores it in SessionManager.
+Returns the JWT if successful or "User Not Found" if invalid.
+
+USER LOGOUT:
+User requests /auth/logout.
+Retrieves the Authorization header and validates it.
+Checks session status in SessionManager.
+Removes the token, confirming "Logged out successfully."
+
+JWT PROCESSING (JwtRequestFilter & JwtUtil)
+JwtRequestFilter:
+Extracts and validates the Authorization header.
+Retrieves JWT token and uses JwtUtil to get the username.
+Verifies session validity with SessionManager.
+Sets the authentication in SecurityContext if valid.
+
+JwtUtil:
+Decodes the JWT to extract username and expiration date.
+Validates token by checking claims and expiration.
+Creates and signs new tokens as needed for user authentication.
+
+SecurityConfig:
+Disables CSRF and enables CORS for trusted domains.
+Sets stateless session management for JWT.
+Allows public access to /auth/register, /auth/login, and /h2-console/.
+Adds JwtRequestFilter for request validation.
+Configures BCrypt password encoding for secure password hashing.
+
