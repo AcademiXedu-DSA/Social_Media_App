@@ -1,4 +1,5 @@
 # Social_Media_App
+tst
 1. Creating a New Branch
 When you start a new feature or work on a separate part of the project, create a new branch. This keeps your work organized and isolated from the main codebase.
 
@@ -73,10 +74,3 @@ bash
 git branch -d <branch-name>         # Delete a local branch
 git push origin --delete <branch-name>  # Delete the branch on the remote
 By building branches, committing changes incrementally, and merging only when features are complete, you keep your codebase organized and collaborative-friendly. Let me know if you need further help!
-
-
-
-
-
-
-
