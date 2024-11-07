@@ -1,5 +1,41 @@
 # Social_Media_App
-# Social_Media_App
+
+**FLOW-CHART**
+
+                                                  -------------
+                                                 |             |
+                                                 |    USER     |
+                                                  -------------
+                                                        |
+                                                        v
+                                                -------------------------
+                                               | **AuthController.java** |
+                                               |      /api/auth          |
+                                                -------------------------
+                                                        |
+                                                        v
+                        ------------------         ----------------            ------------------
+                        |Tries to Register|        |Tries to Login|            | Tries to Logout|
+                        |  /Register      |        |    /Login    |            |      /Logout   |
+                        ------------------         ----------------             -----------------
+                             |                           |                             |
+                             v                           v                             v
+                        -------------------------   -------------------------   --------------------------
+                       | plain pasw-->Hashed Pass|  |  verify entered pasw  |   |make session inactive in| 
+                       | use Bcrypt Algo generate|  | with hashed pasw in db|   |session manager         |
+                       | JWT **AuthService.java**|  |  **AuthService.java** |   |**sessionmanager.java** |  
+                       ---------------------------  -------------------------   --------------------------
+                             |                               |                         
+                             v                               v
+                         ----------------           -----------------------
+                        | Save user in db|         |    Generate JWT token |
+                        |                |         | using HS256 Algorithm | 
+                         ----------------          |   in **JwtUtil.java** |
+                                                    -----------------------
+
+
+
+
 <!-- FILES WE HAVE USED  -->
  **AuthController**
  **User.java**
@@ -172,35 +208,3 @@ typically formatted as Bearer <token>.
 
 
 
-**FLOW-CHART**
-
-                                                  -------------
-                                                 |             |
-                                                 |    USER     |
-                                                  -------------
-                                                        |
-                                                        v
-                                                -------------------------
-                                               | **AuthController.java** |
-                                               |      /api/auth          |
-                                                -------------------------
-                                                        |
-                                                        v
-                        ------------------         ----------------            ------------------
-                        |Tries to Register|        |Tries to Login|            | Tries to Logout|
-                        |  /Register      |        |    /Login    |            |      /Logout   |
-                        ------------------         ----------------             -----------------
-                             |                           |                             |
-                             v                           v                             v
-                        -------------------------   -------------------------   --------------------------
-                       | plain pasw-->Hashed Pass|  |  verify entered pasw  |   |make session inactive in| 
-                       | use Bcrypt Algo generate|  | with hashed pasw in db|   |session manager         |
-                       | JWT **AuthService.java**|  |  **AuthService.java** |   |**sessionmanager.java** |  
-                       ---------------------------  -------------------------   --------------------------
-                             |                               |                         
-                             v                               v
-                         ----------------           -----------------------
-                        | Save user in db|         |    Generate JWT token |
-                        |                |         | using HS256 Algorithm | 
-                         ----------------          |   in **JwtUtil.java** |
-                                                    -----------------------
