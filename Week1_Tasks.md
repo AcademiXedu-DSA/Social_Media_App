@@ -1,3 +1,28 @@
+auth-application/
+├── src/
+│   └── main/
+│       └── java/
+│           └── com/
+│               └── auth/
+│                   ├── controller/
+│                   │   └── AuthController.java
+│                   ├── exception/
+│                   │   ├── GlobalExceptionHandler.java
+│                   │   ├── InvalidCredentialsException.java
+│                   │   └── UserAlreadyExistsException.java
+│                   ├── model/
+│                   │   └── User.java
+│                   ├── repository/
+│                   │   └── UserRepository.java
+│                   ├── security/
+│                   │   ├── JwtRequestFilter.java
+│                   │   ├── JwtUtil.java
+│                   │   └── SecurityConfig.java
+│                   └── service/
+│                       ├── AuthService.java
+│                       └── SessionManager.java
+├── pom.xml
+
 
 ## **Table of Contents**
 
