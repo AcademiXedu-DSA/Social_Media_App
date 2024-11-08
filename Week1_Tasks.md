@@ -1,3 +1,4 @@
+``` pom
 auth-application/
 ├── src/
 │   └── main/
@@ -22,7 +23,7 @@ auth-application/
 │                       ├── AuthService.java
 │                       └── SessionManager.java
 ├── pom.xml
-
+```
 
 ## **Table of Contents**
 
