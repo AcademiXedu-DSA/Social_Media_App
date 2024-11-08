@@ -24,7 +24,7 @@
 
 Build a secure authentication service using **Spring Boot** that allows users to **register**, **log in**, and **log out**. The service will utilize **JWT (JSON Web Tokens)** for stateless session management and adhere to best security practices.
 
-### **Key Components**
+### **Key Components** 
 
 - **User Entity:** Represents the users in the system.
 - **User Repository:** Handles data persistence for users.
