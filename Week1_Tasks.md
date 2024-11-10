@@ -3,9 +3,9 @@ auth-application/
 ├── src/
 │   └── main/
 │       └── java/
-│           └── com
+│           └── com/
 │               └── auth/
-│                   ├── controller
+│                   ├── controller/
 │                   │   └── AuthController.java
 │                   ├── exception/
 │                   │   ├── GlobalExceptionHandler.java
