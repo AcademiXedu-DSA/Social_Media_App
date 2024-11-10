@@ -32,7 +32,7 @@ public class SecurityConfig  {
             .authorizeHttpRequests(auth -> auth
             .requestMatchers("/api/auth/**").permitAll()
             .requestMatchers("/h2-console/**").permitAll()
-            .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() // Allow Swagger access
+            .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()  // Allow Swagger access
             .anyRequest().authenticated()
             )
            .sessionManagement(session -> session
