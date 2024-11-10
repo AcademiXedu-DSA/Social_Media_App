@@ -15,7 +15,7 @@ auth-application/
 │                   │   └── User.java 
 │                   ├── repository/
 │                   │   └── UserRepository.java
-│                   ├── security/
+│                   ├── security/  
 │                   │   ├── JwtRequestFilter.java
 │                   │   ├── JwtUtil.java
 │                   │   └── SecurityConfig.java
