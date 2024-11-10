@@ -1,8 +1,8 @@
-``` pom
+ pom
 auth-application/
 ├── src/
 │   └── main/
-│       └── java/
+│       └── java/ 
 │           └── com/
 │               └── auth/
 │                   ├── controller/
@@ -23,9 +23,9 @@ auth-application/
 │                       ├── AuthService.java
 │                       └── SessionManager.java
 ├── pom.xml
-```
 
-## **Table of Contents**
+
+## *Table of Contents*
 
 1. [Project Overview](#1-project-overview)
 2. [Project Setup](#2-project-setup)
@@ -44,40 +44,40 @@ auth-application/
 
 ---
 
-## **1. Project Overview**
+## *1. Project Overview*
 
-### **Objective**
+### *Objective*
 
-Build a secure authentication service using **Spring Boot** that allows users to **register**, **log in**, and **log out**. The service will utilize **JWT (JSON Web Tokens)** for stateless session management and adhere to best security practices.
+Build a secure authentication service using *Spring Boot* that allows users to *register, **log in, and **log out. The service will utilize **JWT (JSON Web Tokens)* for stateless session management and adhere to best security practices.
 
-### **Key Components** 
+### *Key Components* 
 
-- **User Entity:** Represents the users in the system.
-- **User Repository:** Handles data persistence for users.
-- **Authentication Service:** Contains business logic for authentication.
-- **Session Manager:** Manages user sessions.
-- **JWT Utility:** Generates and validates JWT tokens.
-- **JWT Request Filter:** Intercepts requests to validate JWTs.
-- **Security Configuration:** Configures Spring Security settings.
-- **Authentication Controller:** Exposes REST endpoints for authentication.
-- **Global Exception Handler:** Manages application-wide exceptions.
-- **API Documentation:** Provides interactive API docs using Swagger.
+- *User Entity:* Represents the users in the system.
+- *User Repository:* Handles data persistence for users.
+- *Authentication Service:* Contains business logic for authentication.
+- *Session Manager:* Manages user sessions.
+- *JWT Utility:* Generates and validates JWT tokens.
+- *JWT Request Filter:* Intercepts requests to validate JWTs.
+- *Security Configuration:* Configures Spring Security settings.
+- *Authentication Controller:* Exposes REST endpoints for authentication.
+- *Global Exception Handler:* Manages application-wide exceptions.
+- *API Documentation:* Provides interactive API docs using Swagger.
 
 ---
 
-## **2. Project Setup**
+## *2. Project Setup*
 
-### **Step 1: Initialize the Spring Boot Project**
+### *Step 1: Initialize the Spring Boot Project*
 
 1. Navigate to [Spring Initializr](https://start.spring.io/).
 2. Configure the project with the following settings:
-   - **Project:** Maven Project
-   - **Language:** Java
-   - **Spring Boot:** 2.7.x or later
-   - **Group:** `com.auth`
-   - **Artifact:** `auth-application`
-   - **Name:** `AuthApplication`
-   - **Dependencies:**
+   - *Project:* Maven Project
+   - *Language:* Java
+   - *Spring Boot:* 2.7.x or later
+   - *Group:* com.auth
+   - *Artifact:* auth-application
+   - *Name:* AuthApplication
+   - *Dependencies:*
      - Spring Web
      - Spring Security
      - Spring Data JPA
@@ -85,38 +85,38 @@ Build a secure authentication service using **Spring Boot** that allows users to
      - Lombok
      - Springfox Swagger UI
 
-3. Click **Generate** to download the project.
+3. Click *Generate* to download the project.
 4. Extract the downloaded archive and open it in your preferred IDE (e.g., IntelliJ IDEA, Eclipse).
 
-### **Step 2: Configure Lombok**
+### *Step 2: Configure Lombok*
 
-Ensure that Lombok is correctly set up in your IDE to handle annotations like `@Data`, `@NoArgsConstructor`, and `@AllArgsConstructor`.
+Ensure that Lombok is correctly set up in your IDE to handle annotations like @Data, @NoArgsConstructor, and @AllArgsConstructor.
 
-- **IntelliJ IDEA:** Install the Lombok plugin via `Settings > Plugins`.
-- **Eclipse:** Install the Lombok plugin by downloading the Lombok jar and running it with the Eclipse executable.
+- *IntelliJ IDEA:* Install the Lombok plugin via Settings > Plugins.
+- *Eclipse:* Install the Lombok plugin by downloading the Lombok jar and running it with the Eclipse executable.
 
 ---
 
-## **3. Defining the User Entity**
+## *3. Defining the User Entity*
 
-### **Learning Objectives**
+### *Learning Objectives*
 
 - Understand JPA annotations and their roles.
 - Define entity constraints like uniqueness and non-nullability.
 - Set default values for entity fields.
 
-### **Task**
+### *Task*
 
-Complete the `User.java` file by filling in the missing annotations and fields.
+Complete the User.java file by filling in the missing annotations and fields.
 
-### **Instructions**
+### *Instructions*
 
-1. Navigate to `src/main/java/com/auth/model/User.java`.
-2. Replace the existing code with the following, filling in the blanks marked by `___`.
+1. Navigate to src/main/java/com/auth/model/User.java.
+2. Replace the existing code with the following, filling in the blanks marked by ___.
 
-### **Code with Blanks**
+### *Code with Blanks*
 
-```java
+java
 // File: src/main/java/com/auth/model/User.java
 package com.auth.model;
 
@@ -128,54 +128,54 @@ import javax.persistence.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@___
-@___(name = "users")
+@Entity_
+@Table__(name = "users")
 public class User {
-    @___
-    @___(strategy = GenerationType.IDENTITY)
+    @Id___
+    @GeneratedValue__(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @___(unique = true, nullable = false)
+    @Column__(unique = true, nullable = false)
     private String username;
 
-    @___(nullable = false)
+    @Column__(nullable = false)
     private String password;
 
-    @___(nullable = false)
+    @Column__(nullable = false)
     private String role = "USER";
 }
-```
 
-### **Guidance**
 
-- **Annotations to Add:**
-  - `@Entity`
-  - `@Table`
-  - `@Id`
-  - `@GeneratedValue`
-  - `@Column`
+### *Guidance*
+
+- *Annotations to Add:*
+  - @Entity
+  - @Table
+  - @Id
+  - @GeneratedValue
+  - @Column
 
 ---
 
-## **4. Creating the User Repository**
+## *4. Creating the User Repository*
 
-### **Learning Objectives**
+### *Learning Objectives*
 
 - Understand the role of repositories in Spring Data JPA.
 - Define custom query methods.
 
-### **Task**
+### *Task*
 
-Complete the `UserRepository.java` by adding methods to find a user by username and check if a username exists.
+Complete the UserRepository.java by adding methods to find a user by username and check if a username exists.
 
-### **Instructions**
+### *Instructions*
 
-1. Navigate to `src/main/java/com/auth/repository/UserRepository.java`.
-2. Replace the existing code with the following, filling in the blanks marked by `___`.
+1. Navigate to src/main/java/com/auth/repository/UserRepository.java.
+2. Replace the existing code with the following, filling in the blanks marked by ___.
 
-### **Code with Blanks**
+### *Code with Blanks*
 
-```java
+java
 // File: src/main/java/com/auth/repository/UserRepository.java
 package com.auth.repository;
 
@@ -185,38 +185,38 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends ___<User, ___> {
+public interface UserRepository extends JpaRepository<User,Long __> {
     Optional<User> findByUsername(String username);
     boolean existsByUsername(String username);
 }
-```
 
-### **Guidance**
 
-- **Extend `JpaRepository` with the correct type parameters.**
+### *Guidance*
+
+- **Extend JpaRepository with the correct type parameters.**
 
 ---
 
-## **5. Implementing the Authentication Service**
+## *5. Implementing the Authentication Service*
 
-### **Learning Objectives**
+### *Learning Objectives*
 
 - Implement business logic for user registration, authentication, and logout.
-- Utilize dependency injection with `@Autowired`.
+- Utilize dependency injection with @Autowired.
 - Handle password encryption.
 
-### **Task**
+### *Task*
 
-Complete the `AuthService.java` by implementing the `register`, `authenticate`, and `logout` methods.
+Complete the AuthService.java by implementing the register, authenticate, and logout methods.
 
-### **Instructions**
+### *Instructions*
 
-1. Navigate to `src/main/java/com/auth/service/AuthService.java`.
-2. Replace the existing code with the following, filling in the blanks marked by `___`.
+1. Navigate to src/main/java/com/auth/service/AuthService.java.
+2. Replace the existing code with the following, filling in the blanks marked by ___.
 
-### **Code with Blanks**
+### *Code with Blanks*
 
-```java
+java
 // File: src/main/java/com/auth/service/AuthService.java
 package com.auth.service;
 
@@ -230,16 +230,16 @@ import java.util.Optional;
 @Service
 public class AuthService {
     @Autowired
-    private ___;
+    private UserRepository userRepository ;
 
     @Autowired
-    private ___;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private ___;
+    private SessionManager sessionManager;
 
     public User register(User user) {
-        if (userRepository.___(user.getUsername())) {
+        if (userRepository.existsByUsername(user.getUsername())) {
             throw new RuntimeException("Username already exists");
         }
         
@@ -250,57 +250,57 @@ public class AuthService {
         
         // Encrypt password before storing
         user.setPassword(passwordEncoder.___(user.getPassword()));
-        return userRepository.___(user);
+        return userRepository.save(user);
     }
 
     public Optional<User> authenticate(String username, String password) {
         Optional<User> userOpt = userRepository.findByUsername(username);
         
-        if (userOpt.isPresent() && passwordEncoder.___(password, userOpt.get().getPassword())) {
+        if (userOpt.isPresent() && passwordEncoder.matches(password, userOpt.get().getPassword())) {
             return userOpt;
         }
         
-        return ___;
+        return useropt___;
     }
 
     public void logout(String username) {
-        sessionManager.___(username);
+        sessionManager.invalidatesession__(username);
     }
 }
-```
 
-### **Guidance**
 
-- **Dependencies to Inject:**
-  - `UserRepository`
-  - `PasswordEncoder`
-  - `SessionManager`
-- **Methods to Implement:**
-  - `register`: Checks for existing usernames, sets default roles, encrypts passwords, and saves the user.
-  - `authenticate`: Verifies user credentials.
-  - `logout`: Invalidates the user's session.
+### *Guidance*
+
+- *Dependencies to Inject:*
+  - UserRepository
+  - PasswordEncoder
+  - SessionManager
+- *Methods to Implement:*
+  - register: Checks for existing usernames, sets default roles, encrypts passwords, and saves the user.
+  - authenticate: Verifies user credentials.
+  - logout: Invalidates the user's session.
 
 ---
 
-## **6. Managing Sessions**
+## *6. Managing Sessions*
 
-### **Learning Objectives**
+### *Learning Objectives*
 
 - Understand session management in a stateless authentication system.
 - Utilize thread-safe collections for concurrent access.
 
-### **Task**
+### *Task*
 
-Complete the `SessionManager.java` by implementing methods to create, invalidate, and validate sessions.
+Complete the SessionManager.java by implementing methods to create, invalidate, and validate sessions.
 
-### **Instructions**
+### *Instructions*
 
-1. Navigate to `src/main/java/com/auth/service/SessionManager.java`.
-2. Replace the existing code with the following, filling in the blanks marked by `___`.
+1. Navigate to src/main/java/com/auth/service/SessionManager.java.
+2. Replace the existing code with the following, filling in the blanks marked by ___.
 
-### **Code with Blanks**
+### *Code with Blanks*
 
-```java
+java
 // File: src/main/java/com/auth/service/SessionManager.java
 package com.auth.service;
 
@@ -313,47 +313,47 @@ public class SessionManager {
     private final ConcurrentMap<String, String> userSessions = new ConcurrentHashMap<>();
 
     public void createSession(String username, String token) {
-        userSessions.___(username, token);
+        userSessions._put__(username, token);
     }
 
     public void invalidateSession(String username) {
-        userSessions.___(username);
+        userSessions.remove___(username);
     }
 
     public boolean isSessionValid(String username, String token) {
-        String storedToken = userSessions.___(username);
-        return storedToken != null && storedToken.___(token);
+        String storedToken = userSessions.get__(username);
+        return storedToken != null && storedToken.equals__(token);
     }
 }
-```
 
-### **Guidance**
 
-- **Use `ConcurrentHashMap` for thread safety.**
-- **Implement methods to handle session creation, invalidation, and validation.**
+### *Guidance*
+
+- **Use ConcurrentHashMap for thread safety.**
+- *Implement methods to handle session creation, invalidation, and validation.*
 
 ---
 
-## **7. JWT Utility Class**
+## *7. JWT Utility Class*
 
-### **Learning Objectives**
+### *Learning Objectives*
 
 - Understand JWT structure and purpose.
 - Implement token generation and validation.
 - Handle token claims and expiration.
 
-### **Task**
+### *Task*
 
-Complete the `JwtUtil.java` by implementing methods to generate tokens, extract information, and validate tokens.
+Complete the JwtUtil.java by implementing methods to generate tokens, extract information, and validate tokens.
 
-### **Instructions**
+### *Instructions*
 
-1. Navigate to `src/main/java/com/auth/security/JwtUtil.java`.
-2. Replace the existing code with the following, filling in the blanks marked by `___`.
+1. Navigate to src/main/java/com/auth/security/JwtUtil.java.
+2. Replace the existing code with the following, filling in the blanks marked by ___.
 
-### **Code with Blanks**
+### *Code with Blanks*
 
-```java
+java
 // File: src/main/java/com/auth/security/JwtUtil.java
 package com.auth.security;
 
@@ -377,11 +377,11 @@ public class JwtUtil {
     }
 
     public Date extractExpiration(String token) {
-        return ___(token, Claims::getExpiration);
+        return extractClaim___(token, Claims::getExpiration);
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = ___(token);
+        final Claims claims = extractAllClaims___(token);
         return claimsResolver.apply(claims);
     }
 
@@ -393,12 +393,12 @@ public class JwtUtil {
     }
 
     private Boolean isTokenExpired(String token) {
-        return ___(token).before(new Date());
+        return extractExpiration___(token).before(new Date());
     }
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        return ___(claims, userDetails.getUsername());
+        return createToken___(claims, userDetails.getUsername());
     }
 
     private String createToken(Map<String, Object> claims, String subject) {
@@ -412,37 +412,37 @@ public class JwtUtil {
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {
-        final String username = ___(token);
-        return (username.equals(userDetails.getUsername()) && !___(token));
+        final String username = extraxtUsername___(token);
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired___(token));
     }
 }
-```
 
-### **Guidance**
 
-- **Implement methods to handle claims, token extraction, generation, and validation.**
+### *Guidance*
+
+- *Implement methods to handle claims, token extraction, generation, and validation.*
 
 ---
 
-## **8. JWT Request Filter**
+## *8. JWT Request Filter*
 
-### **Learning Objectives**
+### *Learning Objectives*
 
 - Intercept HTTP requests to validate JWT tokens.
 - Set authentication in the security context for valid tokens.
 
-### **Task**
+### *Task*
 
-Complete the `JwtRequestFilter.java` by implementing the `doFilterInternal` method to extract and validate JWT tokens.
+Complete the JwtRequestFilter.java by implementing the doFilterInternal method to extract and validate JWT tokens.
 
-### **Instructions**
+### *Instructions*
 
-1. Navigate to `src/main/java/com/auth/security/JwtRequestFilter.java`.
-2. Replace the existing code with the following, filling in the blanks marked by `___`.
+1. Navigate to src/main/java/com/auth/security/JwtRequestFilter.java.
+2. Replace the existing code with the following, filling in the blanks marked by ___.
 
-### **Code with Blanks**
+### *Code with Blanks*
 
-```java
+java
 // File: src/main/java/com/auth/security/JwtRequestFilter.java
 package com.auth.security;
 
@@ -464,7 +464,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 @Component
-public class JwtRequestFilter extends ___ {
+public class JwtRequestFilter extends OnceperRequestFilter___ {
     
     @Autowired
     private JwtUtil jwtUtil;
@@ -473,7 +473,7 @@ public class JwtRequestFilter extends ___ {
     private SessionManager sessionManager;
 
     @Override
-    protected void ___(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+    protected void doFilterInternal___(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
         final String authorizationHeader = request.getHeader("Authorization");
@@ -481,7 +481,7 @@ public class JwtRequestFilter extends ___ {
         String username = null;
         String jwt = null;
 
-        if (authorizationHeader != null && authorizationHeader.___("Bearer ")) {
+        if (authorizationHeader != null && authorizationHeader.startsWith___("Bearer ")) {
             jwt = authorizationHeader.substring(7);
             try {
                 username = jwtUtil.extractUsername(jwt);
@@ -491,51 +491,51 @@ public class JwtRequestFilter extends ___ {
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            if (sessionManager.___(username, jwt)) {
+            if (sessionManager.isSessionValid___(username, jwt)) {
                 UserDetails userDetails = new User(username, "", new ArrayList<>());
 
-                if (jwtUtil.___(jwt, userDetails)) {
+                if (jwtUtil._validateToken__(jwt, userDetails)) {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails, null, userDetails.getAuthorities());
-                    authToken.setDetails(new WebAuthenticationDetailsSource().___(request));
-                    SecurityContextHolder.getContext().___(authToken);
+                    authToken.setDetails(new WebAuthenticationDetailsSource()._buildDetails__(request));
+                    SecurityContextHolder.getContext()._setAuthentication__(authToken);
                 }
             }
         }
         ___;
     }
 }
-```
 
-### **Guidance**
 
-- **Extend `OncePerRequestFilter`.**
-- **Implement the `doFilterInternal` method.**
-- **Extract and validate JWT tokens from the `Authorization` header.**
-- **Set authentication in the security context for valid tokens.**
+### *Guidance*
+
+- **Extend OncePerRequestFilter.**
+- **Implement the doFilterInternal method.**
+- **Extract and validate JWT tokens from the Authorization header.**
+- *Set authentication in the security context for valid tokens.*
 
 ---
 
-## **9. Configuring Spring Security**
+## *9. Configuring Spring Security*
 
-### **Learning Objectives**
+### *Learning Objectives*
 
 - Configure Spring Security settings for authentication and authorization.
 - Integrate JWT filters into the security filter chain.
 - Set up CORS and CSRF configurations.
 
-### **Task**
+### *Task*
 
-Complete the `SecurityConfig.java` by configuring security settings and integrating the `JwtRequestFilter`.
+Complete the SecurityConfig.java by configuring security settings and integrating the JwtRequestFilter.
 
-### **Instructions**
+### *Instructions*
 
-1. Navigate to `src/main/java/com/auth/security/SecurityConfig.java`.
-2. Replace the existing code with the following, filling in the blanks marked by `___`.
+1. Navigate to src/main/java/com/auth/security/SecurityConfig.java.
+2. Replace the existing code with the following, filling in the blanks marked by ___.
 
-### **Code with Blanks**
+### *Code with Blanks*
 
-```java
+java
 // File: src/main/java/com/auth/security/SecurityConfig.java
 package com.auth.security;
 
@@ -578,7 +578,7 @@ public class SecurityConfig extends ___ {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new ___();
+        return new BcryptPasswordEncoder___();
     }
 
     @Bean
@@ -590,40 +590,40 @@ public class SecurityConfig extends ___ {
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.___("/**", configuration);
+        source.registerCorsConfiguration___("/**", configuration);
         return source;
     }
 }
-```
 
-### **Guidance**
 
-- **Extend `WebSecurityConfigurerAdapter`.**
-- **Override the `configure` method to set up security settings.**
-- **Define beans for `PasswordEncoder` and `CorsConfigurationSource`.**
+### *Guidance*
+
+- **Extend WebSecurityConfigurerAdapter.**
+- **Override the configure method to set up security settings.**
+- **Define beans for PasswordEncoder and CorsConfigurationSource.**
 
 ---
 
-## **10. Building the Authentication Controller**
+## *10. Building the Authentication Controller*
 
-### **Learning Objectives**
+### *Learning Objectives*
 
 - Expose REST endpoints for user registration, login, and logout.
 - Handle HTTP requests and responses.
 - Integrate with the service layer and JWT utilities.
 
-### **Task**
+### *Task*
 
-Complete the `AuthController.java` by implementing the endpoints with appropriate request mappings and logic.
+Complete the AuthController.java by implementing the endpoints with appropriate request mappings and logic.
 
-### **Instructions**
+### *Instructions*
 
-1. Navigate to `src/main/java/com/auth/controller/AuthController.java`.
-2. Replace the existing code with the following, filling in the blanks marked by `___`.
+1. Navigate to src/main/java/com/auth/controller/AuthController.java.
+2. Replace the existing code with the following, filling in the blanks marked by ___.
 
-### **Code with Blanks**
+### *Code with Blanks*
 
-```java
+java
 // File: src/main/java/com/auth/controller/AuthController.java
 package com.auth.controller;
 
@@ -656,23 +656,23 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
         try {
-            User registeredUser = authService.___(user);
+            User registeredUser = authService.register___(user);
             UserDetails userDetails = org.springframework.security.core.userdetails.User
-                .withUsername(registeredUser.___())
+                .withUsername(registeredUser.getUsername___())
                 .password("")
-                .authorities(registeredUser.___())
+                .authorities(registeredUser.getRole___())
                 .build();
 
-            String token = jwtUtil.___(userDetails);
-            sessionManager.___(registeredUser.___(), token);
+            String token = jwtUtil.generateToken___(userDetails);
+            sessionManager._createSession__(registeredUser.___(), token);
 
             Map<String, Object> response = new HashMap<>();
             response.put("message", "User registered successfully");
             response.put("token", token);
-            response.put("username", registeredUser.___());
-            response.put("role", registeredUser.___());
+            response.put("username", registeredUser.getUsername___());
+            response.put("role", registeredUser._getRole__());
             
-            return ResponseEntity.___(response);
+            return ResponseEntity.ok___(response);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
@@ -688,24 +688,24 @@ public class AuthController {
         String password = credentials.get("password");
 
         try {
-            Optional<User> userOpt = authService.___(username, password);
+            Optional<User> userOpt = authService.authenticate___(username, password);
             
-            if (userOpt.___()) {
-                User user = userOpt.___();
+            if (userOpt.ispresent___()) {
+                User user = userOpt._get__();
                 UserDetails userDetails = org.springframework.security.core.userdetails.User
                     .withUsername(username)
                     .password("")
-                    .authorities(user.___())
+                    .authorities(user._getRole__())
                     .build();
 
-                String token = jwtUtil.___(userDetails);
-                sessionManager.___(username, token);
+                String token = jwtUtil._generateToken__(userDetails);
+                sessionManager._createSession__(username, token);
 
                 Map<String, Object> response = new HashMap<>();
                 response.put("token", token);
                 response.put("username", username);
-                response.put("role", user.___());
-                return ResponseEntity.___(response);
+                response.put("role", user.getRole___());
+                return ResponseEntity.ok___(response);
             }
 
             return ResponseEntity.badRequest().body(Map.of("error", "Invalid credentials"));
@@ -722,7 +722,7 @@ public class AuthController {
 
         try {
             String jwt = token.substring(7);
-            String username = jwtUtil.___(jwt);
+            String username = jwtUtil.extractUsername___(jwt);
             
             UserDetails userDetails = org.springframework.security.core.userdetails.User
                 .withUsername(username)
@@ -730,52 +730,52 @@ public class AuthController {
                 .authorities("USER")
                 .build();
 
-            if (!jwtUtil.___(jwt, userDetails)) {
+            if (!jwtUtil.validateToken___(jwt, userDetails)) {
                 return ResponseEntity.badRequest().body(Map.of("error", "Invalid or expired token"));
             }
 
-            authService.___(username);
+            authService._logout__(username);
             return ResponseEntity.ok().body(Map.of("message", "Logged out successfully"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("error", "Logout failed: " + e.getMessage()));
         }
     }
 }
-```
 
-### **Guidance**
 
-- **Endpoints to Implement:**
-  - `POST /api/auth/register`: User registration.
-  - `POST /api/auth/login`: User authentication.
-  - `POST /api/auth/logout`: User logout.
-- **Methods to Complete:**
-  - `authService.register(user)`
-  - Access user properties like `getUsername()` and `getRole()`.
-  - Generate token using `jwtUtil.generateToken(userDetails)`.
-  - Manage session with `sessionManager.createSession(username, token)`.
-  - Return responses using `ResponseEntity.ok(response)`.
+### *Guidance*
+
+- *Endpoints to Implement:*
+  - POST /api/auth/register: User registration.
+  - POST /api/auth/login: User authentication.
+  - POST /api/auth/logout: User logout.
+- *Methods to Complete:*
+  - authService.register(user)
+  - Access user properties like getUsername() and getRole().
+  - Generate token using jwtUtil.generateToken(userDetails).
+  - Manage session with sessionManager.createSession(username, token).
+  - Return responses using ResponseEntity.ok(response).
 
 ---
 
-## **11. Global Exception Handling**
+## *11. Global Exception Handling*
 
-### **Learning Objectives**
+### *Learning Objectives*
 
-- Implement centralized exception handling using `@ControllerAdvice`.
+- Implement centralized exception handling using @ControllerAdvice.
 - Create custom exception classes for specific error scenarios.
 
-### **Task**
+### *Task*
 
-Create custom exceptions and a global exception handler using `@ControllerAdvice`.
+Create custom exceptions and a global exception handler using @ControllerAdvice.
 
-### **Instructions**
+### *Instructions*
 
-1. **Create Custom Exception Classes:**
+1. *Create Custom Exception Classes:*
 
-   - **`UserAlreadyExistsException.java`:**
+   - **UserAlreadyExistsException.java:**
    
-     ```java
+     java
      // File: src/main/java/com/auth/exception/UserAlreadyExistsException.java
      package com.auth.exception;
      
@@ -784,11 +784,11 @@ Create custom exceptions and a global exception handler using `@ControllerAdvice
              super(message);
          }
      }
-     ```
+     
    
-   - **`InvalidCredentialsException.java`:**
+   - **InvalidCredentialsException.java:**
    
-     ```java
+     java
      // File: src/main/java/com/auth/exception/InvalidCredentialsException.java
      package com.auth.exception;
      
@@ -797,11 +797,11 @@ Create custom exceptions and a global exception handler using `@ControllerAdvice
              super(message);
          }
      }
-     ```
+     
 
-2. **Create the Global Exception Handler:**
+2. *Create the Global Exception Handler:*
 
-   ```java
+   java
    // File: src/main/java/com/auth/exception/GlobalExceptionHandler.java
    package com.auth.exception;
    
@@ -829,59 +829,59 @@ Create custom exceptions and a global exception handler using `@ControllerAdvice
                                 .body(Map.of("error", "An unexpected error occurred."));
        }
    }
-   ```
+   
 
-### **Guidance**
+### *Guidance*
 
-- **Custom Exceptions:**
-  - **`UserAlreadyExistsException`:** Thrown when attempting to register a user with a username that already exists.
-  - **`InvalidCredentialsException`:** Thrown when user authentication fails due to invalid credentials.
+- *Custom Exceptions:*
+  - **UserAlreadyExistsException:** Thrown when attempting to register a user with a username that already exists.
+  - **InvalidCredentialsException:** Thrown when user authentication fails due to invalid credentials.
   
-- **Global Exception Handler (`GlobalExceptionHandler`):**
-  - **`@ControllerAdvice`:** Indicates that the class provides centralized exception handling across all controllers.
-  - **`@ExceptionHandler`:** Specifies the type of exception to handle.
-  - **Response Structure:** Returns a `Map` with an `"error"` key containing the error message.
-  - **HTTP Status Codes:**
-    - **`CONFLICT (409)`:** For `UserAlreadyExistsException`.
-    - **`UNAUTHORIZED (401)`:** For `InvalidCredentialsException`.
-    - **`INTERNAL_SERVER_ERROR (500)`:** For all other exceptions.
+- **Global Exception Handler (GlobalExceptionHandler):**
+  - **@ControllerAdvice:** Indicates that the class provides centralized exception handling across all controllers.
+  - **@ExceptionHandler:** Specifies the type of exception to handle.
+  - *Response Structure:* Returns a Map with an "error" key containing the error message.
+  - *HTTP Status Codes:*
+    - **CONFLICT (409):** For UserAlreadyExistsException.
+    - **UNAUTHORIZED (401):** For InvalidCredentialsException.
+    - **INTERNAL_SERVER_ERROR (500):** For all other exceptions.
 
 ---
 
-## **12. API Documentation with Swagger**
+## *12. API Documentation with Swagger*
 
-### **Learning Objectives**
+### *Learning Objectives*
 
 - Integrate Swagger for interactive API documentation.
 - Understand how to access and use Swagger UI.
 
-### **Task**
+### *Task*
 
 Configure Swagger in the project by adding necessary dependencies and configuration classes.
 
-### **Instructions**
+### *Instructions*
 
-1. **Add Swagger Dependency:**
+1. *Add Swagger Dependency:*
 
-   - **For Maven (`pom.xml`):**
+   - **For Maven (pom.xml):**
    
-     ```xml
+     xml
      <dependency>
          <groupId>io.springfox</groupId>
          <artifactId>springfox-boot-starter</artifactId>
          <version>3.0.0</version>
      </dependency>
-     ```
+     
    
-   - **For Gradle (`build.gradle`):**
+   - **For Gradle (build.gradle):**
    
-     ```groovy
+     groovy
      implementation 'io.springfox:springfox-boot-starter:3.0.0'
-     ```
+     
 
-2. **Create Swagger Configuration Class:**
+2. *Create Swagger Configuration Class:*
 
-   ```java
+   java
    // File: src/main/java/com/auth/config/SwaggerConfig.java
    package com.auth.config;
    
@@ -905,164 +905,163 @@ Configure Swagger in the project by adding necessary dependencies and configurat
                    .build();
        }
    }
-   ```
+   
 
-3. **Access Swagger UI:**
+3. *Access Swagger UI:*
 
-   Once the application is running, navigate to `http://localhost:8080/swagger-ui/` to access the interactive API documentation.
+   Once the application is running, navigate to http://localhost:8080/swagger-ui/ to access the interactive API documentation.
 
-### **Guidance**
+### *Guidance*
 
-- **Swagger Integration:**
-  - **Dependency:** Adds the Swagger starter to the project, enabling automatic API documentation generation.
-  - **Configuration Class (`SwaggerConfig`):**
-    - **`@Configuration`:** Marks the class as a source of bean definitions.
-    - **`@EnableSwagger2`:** Enables Swagger support in the application.
-    - **`Docket` Bean:** Configures Swagger to scan the `com.auth.controller` package for API endpoints and includes all paths.
+- *Swagger Integration:*
+  - *Dependency:* Adds the Swagger starter to the project, enabling automatic API documentation generation.
+  - **Configuration Class (SwaggerConfig):**
+    - **@Configuration:** Marks the class as a source of bean definitions.
+    - **@EnableSwagger2:** Enables Swagger support in the application.
+    - **Docket Bean:** Configures Swagger to scan the com.auth.controller package for API endpoints and includes all paths.
   
-- **Swagger UI:** Provides a user-friendly interface to interact with and test the API endpoints without the need for external tools like Postman.
+- *Swagger UI:* Provides a user-friendly interface to interact with and test the API endpoints without the need for external tools like Postman.
 
 ---
 
-## **13. Running the Application**
+## *13. Running the Application*
 
-### **Learning Objectives**
+### *Learning Objectives*
 
 - Build and run the Spring Boot application.
 - Access and interact with API endpoints using Swagger UI.
 - Utilize the H2 console for database inspection.
 
-### **Task**
+### *Task*
 
 Follow the steps below to build and run the application, and test the authentication endpoints.
 
-### **Instructions**
+### *Instructions*
 
-1. **Ensure All Code is Correct:**
+1. *Ensure All Code is Correct:*
    - Verify that all previous sections have been completed without syntax errors.
 
-2. **Build the Project:**
+2. *Build the Project:*
    
-   - **Using Maven:**
+   - *Using Maven:*
    
-     ```bash
+     bash
      mvn clean install
-     ```
+     
    
-   - **Using Gradle:**
+   - *Using Gradle:*
    
-     ```bash
+     bash
      gradle build
-     ```
+     
 
-3. **Run the Application:**
+3. *Run the Application:*
    
-   - **Using Maven:**
+   - *Using Maven:*
    
-     ```bash
+     bash
      mvn spring-boot:run
-     ```
+     
    
-   - **Using Gradle:**
+   - *Using Gradle:*
    
-     ```bash
+     bash
      gradle bootRun
-     ```
-   
-   - **Alternatively:** Run the `AuthApplication.java` class directly from your IDE.
-
-4. **Access H2 Console (Development Only):**
-   
-   - Navigate to `http://localhost:8080/h2-console`.
-   - **JDBC URL:** `jdbc:h2:mem:authdb`
-   - **Username:** `sa`
-   - **Password:** *(leave blank)*
-   - Click **Connect** to access the in-memory database.
-
-5. **Access Swagger UI:**
-   
-   - Navigate to `http://localhost:8080/swagger-ui/` to view and interact with the API endpoints.
-
-6. **Testing the Endpoints:**
-   
-   - **Register a New User:**
      
-     - **Endpoint:** `POST /api/auth/register`
-     - **Payload:**
+   
+   - *Alternatively:* Run the AuthApplication.java class directly from your IDE.
+
+4. *Access H2 Console (Development Only):*
+   
+   - Navigate to http://localhost:8080/h2-console.
+   - *JDBC URL:* jdbc:h2:mem:authdb
+   - *Username:* sa
+   - *Password:* (leave blank)
+   - Click *Connect* to access the in-memory database.
+
+5. *Access Swagger UI:*
+   
+   - Navigate to http://localhost:8080/swagger-ui/ to view and interact with the API endpoints.
+
+6. *Testing the Endpoints:*
+   
+   - *Register a New User:*
+     
+     - *Endpoint:* POST /api/auth/register
+     - *Payload:*
        
-       ```json
+       json
        {
          "username": "john_doe",
          "password": "securePassword123"
        }
-       ```
-   
-   - **Login:**
-     
-     - **Endpoint:** `POST /api/auth/login`
-     - **Payload:**
        
-       ```json
+   
+   - *Login:*
+     
+     - *Endpoint:* POST /api/auth/login
+     - *Payload:*
+       
+       json
        {
          "username": "john_doe",
          "password": "securePassword123"
        }
-       ```
+       
    
-   - **Logout:**
+   - *Logout:*
      
-     - **Endpoint:** `POST /api/auth/logout`
-     - **Headers:**
-       - `Authorization: Bearer <JWT_TOKEN>`
-     - **Replace `<JWT_TOKEN>`** with the token received upon successful login.
+     - *Endpoint:* POST /api/auth/logout
+     - *Headers:*
+       - Authorization: Bearer <JWT_TOKEN>
+     - **Replace <JWT_TOKEN>** with the token received upon successful login.
 
-### **Guidance**
+### *Guidance*
 
-- **Replace `<JWT_TOKEN>`** with the actual token obtained from the login response.
+- **Replace <JWT_TOKEN>** with the actual token obtained from the login response.
 
 ---
 
-## **14. Conclusion**
+## *14. Conclusion*
 
-Congratulations! You have successfully built a **Spring Boot Authentication Service** with **JWT-based security**. This fill-in-the-blank tutorial guided you through setting up the project, defining entities and repositories, implementing services and controllers, configuring security, handling exceptions, and documenting APIs with Swagger.
+Congratulations! You have successfully built a *Spring Boot Authentication Service* with *JWT-based security*. This fill-in-the-blank tutorial guided you through setting up the project, defining entities and repositories, implementing services and controllers, configuring security, handling exceptions, and documenting APIs with Swagger.
 
-### **Key Takeaways**
+### *Key Takeaways*
 
-- **Spring Boot:** Simplifies the development of stand-alone, production-grade Spring-based applications.
-- **JWT:** Enables stateless authentication, reducing server-side session management complexities.
-- **Spring Security:** Provides robust security features for authentication and authorization.
-- **Exception Handling:** Ensures consistent and meaningful error responses.
-- **Swagger:** Enhances API usability through interactive documentation.
+- *Spring Boot:* Simplifies the development of stand-alone, production-grade Spring-based applications.
+- *JWT:* Enables stateless authentication, reducing server-side session management complexities.
+- *Spring Security:* Provides robust security features for authentication and authorization.
+- *Exception Handling:* Ensures consistent and meaningful error responses.
+- *Swagger:* Enhances API usability through interactive documentation.
 
-### **Next Steps**
+### *Next Steps*
 
-- **Enhance Security:**
-  - Implement features like **refresh tokens**, **account verification**, and **role-based access control (RBAC)**.
-- **Persistent Sessions:**
-  - Move from in-memory session management to distributed caches like **Redis** for scalability.
-- **Testing:**
-  - Develop comprehensive **unit** and **integration tests** to ensure application reliability.
-- **Deployment:**
-  - Prepare the application for **production environments** with proper configurations and security measures.
+- *Enhance Security:*
+  - Implement features like *refresh tokens, **account verification, and **role-based access control (RBAC)*.
+- *Persistent Sessions:*
+  - Move from in-memory session management to distributed caches like *Redis* for scalability.
+- *Testing:*
+  - Develop comprehensive *unit* and *integration tests* to ensure application reliability.
+- *Deployment:*
+  - Prepare the application for *production environments* with proper configurations and security measures.
 
-### **Further Enhancements [Future Scope]**
+### *Further Enhancements [Future Scope]*
 
-1. **Refresh Tokens:**
+1. *Refresh Tokens:*
    - Implement a mechanism to issue refresh tokens, allowing users to obtain new access tokens without re-authenticating.
-2. **Password Reset Functionality:**
+2. *Password Reset Functionality:*
    - Allow users to reset their passwords via email verification or security questions.
-3. **Account Verification:**
+3. *Account Verification:*
    - Require users to verify their email addresses upon registration.
-4. **User Profile Management:**
+4. *User Profile Management:*
    - Enable users to update their profile information, such as email, name, and password.
-5. **Role Management and RBAC:**
-   - Define multiple roles (e.g., `ADMIN`, `USER`, `MODERATOR`) and secure endpoints based on user roles.
-6. **Audit Logging:**
+5. *Role Management and RBAC:*
+   - Define multiple roles (e.g., ADMIN, USER, MODERATOR) and secure endpoints based on user roles.
+6. *Audit Logging:*
    - Track and log important events (e.g., login attempts, password changes) for security auditing and monitoring.
-7. **API Rate Limiting:**
+7. *API Rate Limiting:*
    - Prevent abuse by limiting the number of requests a user can make to certain endpoints within a specified timeframe.
-8. **Internationalization (i18n):**
+8. *Internationalization (i18n):*
    - Support multiple languages for API responses and error messages to cater to a diverse user base.
-9. **API Versioning:**
-    - Implement versioning (e.g., `/api/v1/auth`) to manage and maintain different API versions seamlessly.
-
+9. *API Versioning:*
+    - Implement versioning (e.g., /api/v1/auth) to manage and maintain different API versions seamlessly.
