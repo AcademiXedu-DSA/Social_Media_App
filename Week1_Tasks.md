@@ -5,7 +5,7 @@ auth-application/
 │       └── java/
 │           └── com
 │               └── auth/
-│                   ├── controller/
+│                   ├── controller
 │                   │   └── AuthController.java
 │                   ├── exception/
 │                   │   ├── GlobalExceptionHandler.java
