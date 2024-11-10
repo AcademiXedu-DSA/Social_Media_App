@@ -12,7 +12,7 @@ auth-application/
 │                   │   ├── InvalidCredentialsException.java
 │                   │   └── UserAlreadyExistsException.java
 │                   ├── model/
-│                   │   └── User.java
+│                   │   └── User.java 
 │                   ├── repository/
 │                   │   └── UserRepository.java
 │                   ├── security/
