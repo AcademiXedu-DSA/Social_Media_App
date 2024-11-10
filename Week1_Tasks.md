@@ -3,7 +3,7 @@ auth-application/
 ├── src/
 │   └── main/
 │       └── java/
-│           └── com/
+│           └── com
 │               └── auth/
 │                   ├── controller/
 │                   │   └── AuthController.java
