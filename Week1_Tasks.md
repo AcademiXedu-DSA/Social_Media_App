@@ -128,20 +128,20 @@ import javax.persistence.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@___
-@___(name = "users")
+@Entity
+@Table(name = "users")
 public class User {
-    @___
-    @___(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @___(unique = true, nullable = false)
+    @Column(unique = true, nullable = false)
     private String username;
 
-    @___(nullable = false)
+    @Column(nullable = false)
     private String password;
 
-    @___(nullable = false)
+    @Column(nullable = false)
     private String role = "USER";
 }
 ```
@@ -185,7 +185,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends ___<User, ___> {
+public interface UserRepository extends JpaReository<User, Long> {
     Optional<User> findByUsername(String username);
     boolean existsByUsername(String username);
 }
@@ -230,16 +230,16 @@ import java.util.Optional;
 @Service
 public class AuthService {
     @Autowired
-    private ___;
+    private UserRepository userRepository;
 
     @Autowired
-    private ___;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private ___;
+    private Sessionmanager sessionManager;
 
     public User register(User user) {
-        if (userRepository.___(user.getUsername())) {
+        if (userRepository.existByUsername(user.getUsername())) {
             throw new RuntimeException("Username already exists");
         }
         
@@ -249,22 +249,22 @@ public class AuthService {
         }
         
         // Encrypt password before storing
-        user.setPassword(passwordEncoder.___(user.getPassword()));
-        return userRepository.___(user);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userRepository.save(user);
     }
 
     public Optional<User> authenticate(String username, String password) {
         Optional<User> userOpt = userRepository.findByUsername(username);
         
-        if (userOpt.isPresent() && passwordEncoder.___(password, userOpt.get().getPassword())) {
+        if (userOpt.isPresent() && passwordEncoder.matches(password, userOpt.get().getPassword())) {
             return userOpt;
         }
         
-        return ___;
+        return Optional.empty();
     }
 
     public void logout(String username) {
-        sessionManager.___(username);
+        sessionManager.invalidateSession(username);
     }
 }
 ```
@@ -313,16 +313,16 @@ public class SessionManager {
     private final ConcurrentMap<String, String> userSessions = new ConcurrentHashMap<>();
 
     public void createSession(String username, String token) {
-        userSessions.___(username, token);
+        userSessions.put(username, token);
     }
 
     public void invalidateSession(String username) {
-        userSessions.___(username);
+        userSessions.remove(username);
     }
 
     public boolean isSessionValid(String username, String token) {
-        String storedToken = userSessions.___(username);
-        return storedToken != null && storedToken.___(token);
+        String storedToken = userSessions.get(username);
+        return storedToken != null && storedToken.equals(token);
     }
 }
 ```
@@ -377,11 +377,11 @@ public class JwtUtil {
     }
 
     public Date extractExpiration(String token) {
-        return ___(token, Claims::getExpiration);
+        return extractClaim(token, Claims::getExpiration);
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = ___(token);
+        final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
 
@@ -393,12 +393,12 @@ public class JwtUtil {
     }
 
     private Boolean isTokenExpired(String token) {
-        return ___(token).before(new Date());
+        return extractExpiratin(token).before(new Date());
     }
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        return ___(claims, userDetails.getUsername());
+        return createToken(claims, userDetails.getUsername());
     }
 
     private String createToken(Map<String, Object> claims, String subject) {
@@ -412,8 +412,8 @@ public class JwtUtil {
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {
-        final String username = ___(token);
-        return (username.equals(userDetails.getUsername()) && !___(token));
+        final String username = extractUsername(token);
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 }
 ```
@@ -464,7 +464,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 @Component
-public class JwtRequestFilter extends ___ {
+public class JwtRequestFilter extends OncePerRequestFilter {
     
     @Autowired
     private JwtUtil jwtUtil;
@@ -473,7 +473,7 @@ public class JwtRequestFilter extends ___ {
     private SessionManager sessionManager;
 
     @Override
-    protected void ___(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
         final String authorizationHeader = request.getHeader("Authorization");
@@ -481,7 +481,7 @@ public class JwtRequestFilter extends ___ {
         String username = null;
         String jwt = null;
 
-        if (authorizationHeader != null && authorizationHeader.___("Bearer ")) {
+        if (authorizationHeader != null && authorizationHeader.startswith("Bearer ")) {
             jwt = authorizationHeader.substring(7);
             try {
                 username = jwtUtil.extractUsername(jwt);
@@ -491,18 +491,18 @@ public class JwtRequestFilter extends ___ {
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            if (sessionManager.___(username, jwt)) {
+            if (sessionManager.isValidSession(username, jwt)) {
                 UserDetails userDetails = new User(username, "", new ArrayList<>());
 
-                if (jwtUtil.___(jwt, userDetails)) {
+                if (jwtUtil.validateToken(jwt, userDetails)) {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails, null, userDetails.getAuthorities());
-                    authToken.setDetails(new WebAuthenticationDetailsSource().___(request));
-                    SecurityContextHolder.getContext().___(authToken);
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
         }
-        ___;
+        chain.doFilter(request, response);
     }
 }
 ```
@@ -555,13 +555,13 @@ import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig extends ___ {
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
     
     @Autowired
     private JwtRequestFilter jwtRequestFilter;
 
     @Override
-    protected void ___(HttpSecurity http) throws Exception {
+    protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
             .authorizeRequests()
             .antMatchers("/api/auth/**").permitAll()
@@ -573,12 +573,12 @@ public class SecurityConfig extends ___ {
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        http.addFilterBefore(jwtRequestFilter, ___);
+        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new ___();
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -590,7 +590,7 @@ public class SecurityConfig extends ___ {
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.___("/**", configuration);
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 }
@@ -656,23 +656,23 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
         try {
-            User registeredUser = authService.___(user);
+            User registeredUser = authService.register(user);
             UserDetails userDetails = org.springframework.security.core.userdetails.User
-                .withUsername(registeredUser.___())
+                .withUsername(registeredUser.getUsername())
                 .password("")
-                .authorities(registeredUser.___())
+                .authorities(registeredUser.getRole())
                 .build();
 
-            String token = jwtUtil.___(userDetails);
-            sessionManager.___(registeredUser.___(), token);
+            String token = jwtUtil.generateToken(userDetails);
+            sessionManager.storeToken(registeredUser.getUsername(), token);
 
             Map<String, Object> response = new HashMap<>();
             response.put("message", "User registered successfully");
             response.put("token", token);
-            response.put("username", registeredUser.___());
-            response.put("role", registeredUser.___());
+            response.put("username", registeredUser.getUsername());
+            response.put("role", registeredUser.getRole());
             
-            return ResponseEntity.___(response);
+            return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
@@ -688,24 +688,24 @@ public class AuthController {
         String password = credentials.get("password");
 
         try {
-            Optional<User> userOpt = authService.___(username, password);
+            Optional<User> userOpt = authService.authenticate(username, password);
             
-            if (userOpt.___()) {
-                User user = userOpt.___();
+            if (userOpt.isPresent()) {
+                User user = userOpt.get();
                 UserDetails userDetails = org.springframework.security.core.userdetails.User
                     .withUsername(username)
                     .password("")
-                    .authorities(user.___())
+                    .authorities(user.getRole())
                     .build();
 
-                String token = jwtUtil.___(userDetails);
-                sessionManager.___(username, token);
+                String token = jwtUtil.generateToken(userDetails);
+                sessionManager.storeToken(username, token);
 
                 Map<String, Object> response = new HashMap<>();
                 response.put("token", token);
                 response.put("username", username);
-                response.put("role", user.___());
-                return ResponseEntity.___(response);
+                response.put("role", user.getRole());
+                return ResponseEntity.ok(response);
             }
 
             return ResponseEntity.badRequest().body(Map.of("error", "Invalid credentials"));
@@ -722,7 +722,7 @@ public class AuthController {
 
         try {
             String jwt = token.substring(7);
-            String username = jwtUtil.___(jwt);
+            String username = jwtUtil.extractUsername(jwt);
             
             UserDetails userDetails = org.springframework.security.core.userdetails.User
                 .withUsername(username)
@@ -730,11 +730,11 @@ public class AuthController {
                 .authorities("USER")
                 .build();
 
-            if (!jwtUtil.___(jwt, userDetails)) {
+            if (!jwtUtil.validateToken(jwt, userDetails)) {
                 return ResponseEntity.badRequest().body(Map.of("error", "Invalid or expired token"));
             }
 
-            authService.___(username);
+            authService.logout(username);
             return ResponseEntity.ok().body(Map.of("message", "Logged out successfully"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("error", "Logout failed: " + e.getMessage()));
