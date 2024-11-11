@@ -78,10 +78,31 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestBody Map<String, String> request) {
-        String username = request.get("username");
-        sessionManager.invalidateSession(username);
-        return ResponseEntity.ok("User logged out successfully");
+        @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestHeader(value = "Authorization", required = false) String token) {
+        if (token == null || !token.startsWith("Bearer ")) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Invalid or missing token"));
+        }
+
+        try {
+            String jwt = token.substring(7);
+            String username = jwtUtil.extractUsername(jwt);
+            
+            UserDetails userDetails = org.springframework.security.core.userdetails.User
+                .withUsername(username)
+                .password("")
+                .authorities("USER")
+                .build();
+
+            if (!jwtUtil.validateToken(jwt, userDetails)) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Invalid or expired token"));
+            }
+
+            authService.logout(username);
+            return ResponseEntity.ok().body(Map.of("message", "Logged out successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Logout failed: " + e.getMessage()));
+        }
     }
 }
+
