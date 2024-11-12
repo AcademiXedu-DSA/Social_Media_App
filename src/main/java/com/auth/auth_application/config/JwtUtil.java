@@ -55,6 +55,7 @@ public class JwtUtil {
     }
 
     public String generateToken(UserDetails userDetails) {
+       //Claims are like pieces of information stored inside the JWT token.
         Map<String, Object> claims = new HashMap<>();
         return createToken(claims, userDetails.getUsername());
     }
@@ -66,6 +67,7 @@ public class JwtUtil {
                    .setSubject(subject)
                    .setIssuedAt(new Date(System.currentTimeMillis()))
                    .setExpiration(new Date(System.currentTimeMillis() + TOKEN_VALIDITY * 1000))
+                   //When the server receives a token from the client, it uses the secret key to check if the token is genuine
                    .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                    .compact();
     }
