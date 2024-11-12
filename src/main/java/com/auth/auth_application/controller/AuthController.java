@@ -80,8 +80,9 @@ public class AuthController {
         } else {
             return ResponseEntity.status(401).body("Invalid username or password");
         }
-    }
-    @PostMapping("/logout")
+ 
+
+        @PostMapping("/logout")
     public ResponseEntity<?> logout(@RequestHeader(value = "Authorization", required = false) String token) {
         if (token == null || !token.startsWith("Bearer ")) {
             return ResponseEntity.badRequest().body(Map.of("error", "Invalid or missing token"));
@@ -108,3 +109,4 @@ public class AuthController {
         }
     }
 }
+
