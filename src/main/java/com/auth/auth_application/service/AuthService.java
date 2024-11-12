@@ -28,12 +28,10 @@ public class AuthService {
             throw new UserAlreadyExistsException("Username already exists");
         }
 
-        // Set default role if not specified
         if (user.getRole() == null || user.getRole().isEmpty()) {
             user.setRole("USER");
         }
 
-        // Encrypt password before storing
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }

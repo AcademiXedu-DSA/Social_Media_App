@@ -1,5 +1,6 @@
 package com.auth.auth_application.config;
 
+import org.hibernate.sql.ast.tree.expression.Every;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,7 +29,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     @Autowired
     private SessionManager sessionManager;
-
+//Every time a request hits a secured endpoint in your application,
+ //this filter is triggered before the request reaches the actual controller logic.
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
@@ -39,6 +41,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String jwt = null;
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            //this line extracts the JWT itself by removing the "Bearer " 
             jwt = authorizationHeader.substring(7);
             try {
                 username = jwtUtil.extractUsername(jwt);

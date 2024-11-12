@@ -34,6 +34,8 @@ public class AuthController {
     public ResponseEntity<?> register(@RequestBody User user) {
     try {
         User registeredUser = authService.register(user);
+        //UserDetails holds the user's login information and roles, 
+        //allowing Spring Security to ensure the user is who they say they are and can only access what they’re allowed to.
         UserDetails userDetails = org.springframework.security.core.userdetails.User
             .withUsername(registeredUser.getUsername())
             .password("")
@@ -41,16 +43,17 @@ public class AuthController {
             .build();
 
         String token = jwtUtil.generateToken(userDetails);
-        sessionManager.createSession(registeredUser.getUsername(), token);
+        sessionManager.createSession(registeredUser.getUsername(),token);
 
         Map<String, String> response = new HashMap<>();
-        response.put("username", registeredUser.getUsername());
-        response.put("token", token);
+            response.put("message", "User registered successfully");
+            response.put("token", token);
+            response.put("username", registeredUser.getUsername());
+            response.put("role", registeredUser.getRole());
 
         return ResponseEntity.ok(response);
     } catch (Exception e) {
-        // Log the error
-        e.printStackTrace(); // For debugging purposes
+        e.printStackTrace(); 
         return ResponseEntity.badRequest().body("Error during registration: " + e.getMessage());
     }
 }
@@ -71,12 +74,13 @@ public class AuthController {
             Map<String, String> response = new HashMap<>();
             response.put("username", userOpt.get().getUsername());
             response.put("token", token);
+            response.put("role", user.getRole());
 
             return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.status(401).body("Invalid username or password");
         }
-    }
+ 
 
         @PostMapping("/logout")
     public ResponseEntity<?> logout(@RequestHeader(value = "Authorization", required = false) String token) {
