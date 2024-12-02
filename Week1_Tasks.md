@@ -12,10 +12,10 @@ auth-application/
 │                   │   ├── InvalidCredentialsException.java
 │                   │   └── UserAlreadyExistsException.java
 │                   ├── model/
-│                   │   └── User.java
+│                   │   └── User.java 
 │                   ├── repository/
 │                   │   └── UserRepository.java
-│                   ├── security/
+│                   ├── security/  
 │                   │   ├── JwtRequestFilter.java
 │                   │   ├── JwtUtil.java
 │                   │   └── SecurityConfig.java
@@ -128,20 +128,20 @@ import javax.persistence.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@___
-@___(name = "users")
+@Entity_
+@Table__(name = "users")
 public class User {
-    @___
-    @___(strategy = GenerationType.IDENTITY)
+    @Id___
+    @GeneratedValue__(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @___(unique = true, nullable = false)
+    @Column__(unique = true, nullable = false)
     private String username;
 
-    @___(nullable = false)
+    @Column__(nullable = false)
     private String password;
 
-    @___(nullable = false)
+    @Column__(nullable = false)
     private String role = "USER";
 }
 ```
@@ -185,7 +185,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends ___<User, ___> {
+public interface UserRepository extends JpaRepository<User,Long __> {
     Optional<User> findByUsername(String username);
     boolean existsByUsername(String username);
 }
@@ -230,16 +230,16 @@ import java.util.Optional;
 @Service
 public class AuthService {
     @Autowired
-    private ___;
+    private UserRepository userRepository ;
 
     @Autowired
-    private ___;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private ___;
+    private SessionManager sessionManager;
 
     public User register(User user) {
-        if (userRepository.___(user.getUsername())) {
+        if (userRepository.existsByUsername(user.getUsername())) {
             throw new RuntimeException("Username already exists");
         }
         
@@ -250,21 +250,21 @@ public class AuthService {
         
         // Encrypt password before storing
         user.setPassword(passwordEncoder.___(user.getPassword()));
-        return userRepository.___(user);
+        return userRepository.save(user);
     }
 
     public Optional<User> authenticate(String username, String password) {
         Optional<User> userOpt = userRepository.findByUsername(username);
         
-        if (userOpt.isPresent() && passwordEncoder.___(password, userOpt.get().getPassword())) {
+        if (userOpt.isPresent() && passwordEncoder.matches(password, userOpt.get().getPassword())) {
             return userOpt;
         }
         
-        return ___;
+        return useropt___;
     }
 
     public void logout(String username) {
-        sessionManager.___(username);
+        sessionManager.invalidatesession__(username);
     }
 }
 ```
@@ -313,16 +313,16 @@ public class SessionManager {
     private final ConcurrentMap<String, String> userSessions = new ConcurrentHashMap<>();
 
     public void createSession(String username, String token) {
-        userSessions.___(username, token);
+        userSessions._put__(username, token);
     }
 
     public void invalidateSession(String username) {
-        userSessions.___(username);
+        userSessions.remove___(username);
     }
 
     public boolean isSessionValid(String username, String token) {
-        String storedToken = userSessions.___(username);
-        return storedToken != null && storedToken.___(token);
+        String storedToken = userSessions.get__(username);
+        return storedToken != null && storedToken.equals__(token);
     }
 }
 ```
@@ -377,11 +377,11 @@ public class JwtUtil {
     }
 
     public Date extractExpiration(String token) {
-        return ___(token, Claims::getExpiration);
+        return extractClaim___(token, Claims::getExpiration);
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = ___(token);
+        final Claims claims = extractAllClaims___(token);
         return claimsResolver.apply(claims);
     }
 
@@ -393,12 +393,12 @@ public class JwtUtil {
     }
 
     private Boolean isTokenExpired(String token) {
-        return ___(token).before(new Date());
+        return extractExpiration___(token).before(new Date());
     }
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        return ___(claims, userDetails.getUsername());
+        return createToken___(claims, userDetails.getUsername());
     }
 
     private String createToken(Map<String, Object> claims, String subject) {
@@ -412,8 +412,8 @@ public class JwtUtil {
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {
-        final String username = ___(token);
-        return (username.equals(userDetails.getUsername()) && !___(token));
+        final String username = extraxtUsername___(token);
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired___(token));
     }
 }
 ```
@@ -464,7 +464,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 @Component
-public class JwtRequestFilter extends ___ {
+public class JwtRequestFilter extends OnceperRequestFilter___ {
     
     @Autowired
     private JwtUtil jwtUtil;
@@ -473,7 +473,7 @@ public class JwtRequestFilter extends ___ {
     private SessionManager sessionManager;
 
     @Override
-    protected void ___(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+    protected void doFilterInternal___(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
         final String authorizationHeader = request.getHeader("Authorization");
@@ -481,7 +481,7 @@ public class JwtRequestFilter extends ___ {
         String username = null;
         String jwt = null;
 
-        if (authorizationHeader != null && authorizationHeader.___("Bearer ")) {
+        if (authorizationHeader != null && authorizationHeader.startsWith___("Bearer ")) {
             jwt = authorizationHeader.substring(7);
             try {
                 username = jwtUtil.extractUsername(jwt);
@@ -491,14 +491,14 @@ public class JwtRequestFilter extends ___ {
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            if (sessionManager.___(username, jwt)) {
+            if (sessionManager.isSessionValid___(username, jwt)) {
                 UserDetails userDetails = new User(username, "", new ArrayList<>());
 
-                if (jwtUtil.___(jwt, userDetails)) {
+                if (jwtUtil._validateToken__(jwt, userDetails)) {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails, null, userDetails.getAuthorities());
-                    authToken.setDetails(new WebAuthenticationDetailsSource().___(request));
-                    SecurityContextHolder.getContext().___(authToken);
+                    authToken.setDetails(new WebAuthenticationDetailsSource()._buildDetails__(request));
+                    SecurityContextHolder.getContext()._setAuthentication__(authToken);
                 }
             }
         }
@@ -578,7 +578,7 @@ public class SecurityConfig extends ___ {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new ___();
+        return new BcryptPasswordEncoder___();
     }
 
     @Bean
@@ -590,7 +590,7 @@ public class SecurityConfig extends ___ {
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.___("/**", configuration);
+        source.registerCorsConfiguration___("/**", configuration);
         return source;
     }
 }
@@ -656,23 +656,23 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
         try {
-            User registeredUser = authService.___(user);
+            User registeredUser = authService.register___(user);
             UserDetails userDetails = org.springframework.security.core.userdetails.User
-                .withUsername(registeredUser.___())
+                .withUsername(registeredUser.getUsername___())
                 .password("")
-                .authorities(registeredUser.___())
+                .authorities(registeredUser.getRole___())
                 .build();
 
-            String token = jwtUtil.___(userDetails);
-            sessionManager.___(registeredUser.___(), token);
+            String token = jwtUtil.generateToken___(userDetails);
+            sessionManager._createSession__(registeredUser.___(), token);
 
             Map<String, Object> response = new HashMap<>();
             response.put("message", "User registered successfully");
             response.put("token", token);
-            response.put("username", registeredUser.___());
-            response.put("role", registeredUser.___());
+            response.put("username", registeredUser.getUsername___());
+            response.put("role", registeredUser._getRole__());
             
-            return ResponseEntity.___(response);
+            return ResponseEntity.ok___(response);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
@@ -688,24 +688,24 @@ public class AuthController {
         String password = credentials.get("password");
 
         try {
-            Optional<User> userOpt = authService.___(username, password);
+            Optional<User> userOpt = authService.authenticate___(username, password);
             
-            if (userOpt.___()) {
-                User user = userOpt.___();
+            if (userOpt.ispresent___()) {
+                User user = userOpt._get__();
                 UserDetails userDetails = org.springframework.security.core.userdetails.User
                     .withUsername(username)
                     .password("")
-                    .authorities(user.___())
+                    .authorities(user._getRole__())
                     .build();
 
-                String token = jwtUtil.___(userDetails);
-                sessionManager.___(username, token);
+                String token = jwtUtil._generateToken__(userDetails);
+                sessionManager._createSession__(username, token);
 
                 Map<String, Object> response = new HashMap<>();
                 response.put("token", token);
                 response.put("username", username);
-                response.put("role", user.___());
-                return ResponseEntity.___(response);
+                response.put("role", user.getRole___());
+                return ResponseEntity.ok___(response);
             }
 
             return ResponseEntity.badRequest().body(Map.of("error", "Invalid credentials"));
@@ -722,7 +722,7 @@ public class AuthController {
 
         try {
             String jwt = token.substring(7);
-            String username = jwtUtil.___(jwt);
+            String username = jwtUtil.extractUsername___(jwt);
             
             UserDetails userDetails = org.springframework.security.core.userdetails.User
                 .withUsername(username)
@@ -730,11 +730,11 @@ public class AuthController {
                 .authorities("USER")
                 .build();
 
-            if (!jwtUtil.___(jwt, userDetails)) {
+            if (!jwtUtil.validateToken___(jwt, userDetails)) {
                 return ResponseEntity.badRequest().body(Map.of("error", "Invalid or expired token"));
             }
 
-            authService.___(username);
+            authService._logout__(username);
             return ResponseEntity.ok().body(Map.of("message", "Logged out successfully"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("error", "Logout failed: " + e.getMessage()));
